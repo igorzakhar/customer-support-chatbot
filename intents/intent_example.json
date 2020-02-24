@@ -1,0 +1,21 @@
+{
+  "display_name": "Python",
+  "messages": [{
+    "text":
+      {"text": ["О, ты хочешь поговорить о Python?"]}
+  }],
+  "training_phrases": [
+    {
+      "parts": [{"text": "Python"}]
+    },
+    {
+      "parts": [{"text": "Питон"}]
+    },
+    {
+      "parts": [{"text": "программирование"}]
+    },
+    {
+      "parts": [{"text": "pip install"}]
+    }
+  ]
+}
