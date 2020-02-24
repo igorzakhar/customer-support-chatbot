@@ -35,7 +35,8 @@ def create_intent(
         training_phrases=training_phrases,
         messages=[message])
 
-    response = intents_client.create_intent(parent, intent)
+    response = intents_client.create_intent(
+        parent, intent, language_code='ru')
 
     logging.debug(f'Intent "{response.display_name}" created.')
 
@@ -69,7 +70,7 @@ def main():
         questions = content['questions']
         answer = content['answer']
 
-        create_intent(project_id, intent_name, questions, answer)
+        create_intent(project_id, intent_name, questions, [answer])
 
 
 if __name__ == '__main__':
