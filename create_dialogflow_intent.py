@@ -35,8 +35,7 @@ def create_intent(
         training_phrases=training_phrases,
         messages=[message])
 
-    response = intents_client.create_intent(
-        parent, intent, language_code='ru')
+    response = intents_client.create_intent(parent, intent)
 
     logging.debug(f'Intent "{response.display_name}" created.')
 
