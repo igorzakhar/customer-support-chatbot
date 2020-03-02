@@ -20,17 +20,21 @@ def detect_intent_texts(project_id, session_id, text, lang_code='ru-RU'):
         query_input=query_input
     )
 
+    if response.query_result.intent.is_fallback:
+        return
+
     return response.query_result.fulfillment_text
 
 
 def reply_to_message(project_id, event, vk_api):
     reply = detect_intent_texts(project_id, event.user_id, event.text)
 
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=reply,
-        random_id=random.randint(1, 1000)
-    )
+    if reply:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=reply,
+            random_id=random.randint(1, 1000)
+        )
 
 
 def main():
