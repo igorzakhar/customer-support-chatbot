@@ -5,6 +5,7 @@ import os
 
 from dotenv import load_dotenv
 import dialogflow_v2 as dialogflow
+from google.api_core.exceptions import InvalidArgument
 
 
 def load_training_phrases(filepath):
@@ -68,8 +69,10 @@ def main():
     for intent_name, content in training_phrases.items():
         questions = content['questions']
         answer = content['answer']
-
-        create_intent(project_id, intent_name, questions, [answer])
+        try:
+            create_intent(project_id, intent_name, questions, [answer])
+        except InvalidArgument as err:
+            logging.exception(err.message, exc_info=False)
 
 
 if __name__ == '__main__':
