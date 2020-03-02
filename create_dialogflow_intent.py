@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import os
+import sys
 
 from dotenv import load_dotenv
 import dialogflow_v2 as dialogflow
@@ -9,8 +10,12 @@ from google.api_core.exceptions import InvalidArgument
 
 
 def load_training_phrases(filepath):
-    with open(filepath, 'r') as fp:
-        return json.load(fp)
+    try:
+        with open(filepath, 'r') as fp:
+            return json.load(fp)
+    except OSError as err:
+        logging.exception(err, exc_info=False)
+        raise
 
 
 def create_intent(
@@ -69,6 +74,7 @@ def main():
     for intent_name, content in training_phrases.items():
         questions = content['questions']
         answer = content['answer']
+
         try:
             create_intent(project_id, intent_name, questions, [answer])
         except InvalidArgument as err:
@@ -76,4 +82,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except OSError:
+        sys.exit()
