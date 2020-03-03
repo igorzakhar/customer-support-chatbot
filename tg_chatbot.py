@@ -1,11 +1,16 @@
 import functools
+import logging
 import os
 
+import dialogflow_v2 as dialogflow
+from log import configure_logger
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler
 from telegram.ext import Filters
-import dialogflow_v2 as dialogflow
+
+
+logger = logging.getLogger(__file__)
 
 
 def start(bot, update):
@@ -37,10 +42,7 @@ def reply(bot, update, project_id):
     update.message.reply_text(reply_message)
 
 
-def main():
-    token = os.getenv('TELEGRAM_API_TOKEN')
-    project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
-
+def run_chatbot(token, project_id):
     updater = Updater(token)
 
     dp = updater.dispatcher
@@ -50,12 +52,40 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(Filters.text, reply_to_message))
 
+    logger.info(f'Бот "{__file__}" запущен.')
+
     updater.start_polling()
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
+
+
+def main():
+    logging.basicConfig(level=logging.WARNING)
+
+    tg_token = os.getenv('TELEGRAM_API_TOKEN')
+    project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
+    logger_bot_token = os.getenv('LOGGER_TOKEN')
+    logger_bot_chat_id = os.getenv('LOGGER_CHAT_ID')
+
+    configure_logger(
+        __file__,
+        level=logging.INFO,
+        bot_token=logger_bot_token,
+        chat_id=logger_bot_chat_id
+    )
+
+    while True:
+        try:
+            run_chatbot(tg_token, project_id)
+
+        except Exception as err:
+            logger.error(f'Бот "{__file__}" упал с ошибкой.')
+            logger.exception(err)
+
+            continue
 
 
 if __name__ == '__main__':
