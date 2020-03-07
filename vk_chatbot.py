@@ -3,32 +3,14 @@ import os
 import random
 import sys
 
+from dialogflow_tools import detect_intent_texts
 from dotenv import load_dotenv
-import dialogflow_v2 as dialogflow
 from log import configure_logger
 from vk_api.longpoll import VkLongPoll, VkEventType
 import vk_api
 
 
 logger = logging.getLogger(__file__)
-
-
-def detect_intent_texts(project_id, session_id, text, lang_code='ru-RU'):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-
-    text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
-    query_input = dialogflow.types.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        session=session,
-        query_input=query_input
-    )
-
-    if response.query_result.intent.is_fallback:
-        return
-
-    return response.query_result.fulfillment_text
 
 
 def reply_to_message(project_id, event, vk_api):
